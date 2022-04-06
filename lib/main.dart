@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:itzcord/Account.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,10 +24,47 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-
-
 }
 
+class AccountChooser extends StatelessWidget {
+  Function(Account)? onAccountSelected;
+  AccountChooser({Key? key, this.onAccountSelected}) : super(key: key);
+
+  //https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html
+  Stream<Account> getAccounts() async* {
+    SharedPreferences s = await SharedPreferences.getInstance();
+    List<String>? accounts = s.getStringList("accounts");
+    if (accounts != null) {
+      for (String account in accounts) {
+        yield await Account.retrieve(account);
+      }
+    }
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+    stream: getAccounts(),
+    builder: (BuildContext context, AsyncSnapshot<Account> snapshot) {
+      if (snapshot.hasData) {
+        return ListView.builder(
+          itemCount: snapshot.data?.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(snapshot.data[index].name),
+              onTap: () {
+                onAccountSelected?.call(snapshot.data[index]);
+              },
+            );
+          },
+        );
+      } else {
+        return Center(child: CircularProgressIndicator());
+      }
+    });
+  }
+}
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
