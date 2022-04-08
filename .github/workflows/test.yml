@@ -44,6 +44,6 @@ jobs:
             git config --local user.email "github-actions[bot]@github.com"
             git config --local user.name "Github CI"
             git add .
-            git commit -m "Commit crime"
+            git commit -m "Format"
             git push
       
