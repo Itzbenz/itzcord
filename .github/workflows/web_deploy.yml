@@ -34,6 +34,7 @@ jobs:
          find gh_pages -mindepth 1 -not -regex "^\./\.git.*" -print0 | xargs -0 -I {} rm -rf {}
          mv build/web/* gh_pages
          cd gh_pages
+         ls
          git add .
          git config --local user.email "github-actions[bot]@users.noreply.github.com"
          git config --local user.name "Bob Builder[Bot]"
