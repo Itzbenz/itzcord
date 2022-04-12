@@ -31,7 +31,7 @@ jobs:
       - run: flutter build web
       - run: |
          rm -rf .git
-         git clone -b gh_pages https://github.com/Itzbenz/itzcord.git gh_pages
+         git clone -b gh_pages https://github.com/${{ github.repository }} gh_pages
          mv gh_pages/.git ./git
          rm -rf gh_pages/*
          mv ./git gh_pages/.git
@@ -39,6 +39,7 @@ jobs:
          cd gh_pages
          ls
          git add .
+         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
          git config --local user.email "github-actions[bot]@users.noreply.github.com"
          git config --local user.name "Bob Builder[Bot]"
          git commit -m "Cool"
