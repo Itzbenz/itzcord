@@ -30,6 +30,7 @@ jobs:
         run: dart pub get
       - run: flutter build web
       - run: |
+         rm -rf .git
          git clone -b gh_pages https://github.com/Itzbenz/itzcord.git gh_pages
          find gh_pages -mindepth 1 -not -regex "^\./\.git.*" -print0 | xargs -0 -I {} rm -rf {}
          mv build/web/* gh_pages
