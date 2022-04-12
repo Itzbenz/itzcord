@@ -1,152 +1,107 @@
 import 'package:flutter/material.dart';
-import 'package:itzcord/Account.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import 'Screen/LoginScreen.dart';
+import 'Vars.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(OurApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-
+class OurApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Itzcord',
-      darkTheme: ThemeData.dark(),
-      theme: ThemeData.light(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
       home: StreamBuilder(
-        stream: null,
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          return MyHomePage(title: '',);
-        }
-      ),
+          stream: null,
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            return const LoadingScreen();
+          }),
     );
   }
 }
 
-class AccountChooser extends StatelessWidget {
-  Function(Account)? onAccountSelected;
-  AccountChooser({Key? key, this.onAccountSelected}) : super(key: key);
+class LoadingScreen extends StatefulWidget {
+  const LoadingScreen({Key? key}) : super(key: key);
 
-  //https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html
-  Stream<Account> getAccounts() async* {
-    SharedPreferences s = await SharedPreferences.getInstance();
-    List<String>? accounts = s.getStringList("accounts");
-    if (accounts != null) {
-      for (String account in accounts) {
-        yield await Account.retrieve(account);
-      }
-    }
+  @override
+  State<StatefulWidget> createState() {
+    return LoadingScreenState();
+  }
+}
 
+class RGBTween extends ColorTween {
+  RGBTween({Color? begin, Color? end}) : super(begin: begin, end: end);
+
+  //0 - 1
+  //start of spectrum - end of spectrum
+  @override
+  Color? lerp(double t) {
+    int i = (t * (255 * 3)) as int;
+    int r = i ~/ 255;
+    int g = (i % 255) ~/ 255;
+    int b = (i % 255) % 255;
+    return Color.fromARGB(255, r, g, b);
+  }
+}
+
+class LoadingScreenState extends State<LoadingScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  late Animation<Color?> _colorBreath;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+    _colorBreath = _animationController.drive(RGBTween(
+        begin: const Color.fromARGB(255, 0, 0, 0),
+        end: const Color.fromARGB(255, 255, 255, 255)));
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-    stream: getAccounts(),
-    builder: (BuildContext context, AsyncSnapshot<Account> snapshot) {
-      if (snapshot.hasData) {
-        return ListView.builder(
-          itemCount: snapshot.data?.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(snapshot.data[index].name),
-              onTap: () {
-                onAccountSelected?.call(snapshot.data[index]);
-              },
+    if (initialized) {
+      return LoginScreen.build(context);
+    } else {
+      return StreamBuilder<String>(
+        stream: init(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && !initialized) {
+            //loading screen with text on the bottom of progress bar
+            return Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    CircularProgressIndicator(
+                      valueColor: _colorBreath,
+                    ),
+                    Text(
+                      snapshot.data ?? "Done",
+                      style: const TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             );
-          },
-        );
-      } else {
-        return Center(child: CircularProgressIndicator());
-      }
-    });
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+          } else {
+            setState(() {
+              initialized = true;
+            });
+            return const Text("Loading");
+          }
+        },
+      );
+    }
   }
 }
