@@ -38,5 +38,5 @@ jobs:
          git add .
          git config --local user.email "github-actions[bot]@users.noreply.github.com"
          git config --local user.name "Bob Builder[Bot]"
-         git commit -a "Cool"
+         git commit -m "Cool"
          git push
