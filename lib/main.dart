@@ -33,19 +33,7 @@ class LoadingScreen extends StatefulWidget {
   }
 }
 
-class RGBTween extends ColorTween {
 
-  //0 - 1
-  //start of spectrum - end of spectrum
-  @override
-  Color? lerp(double t) {
-    int i = (t * (255 * 3)) as int;
-    int r = i ~/ 255;
-    int g = (i % 255) ~/ 255;
-    int b = (i % 255) % 255;
-    return Color.fromARGB(255, r, g, b);
-  }
-}
 
 class LoadingScreenState extends State<LoadingScreen>
     with SingleTickerProviderStateMixin {
@@ -58,8 +46,23 @@ class LoadingScreenState extends State<LoadingScreen>
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
-    );
-    _colorBreath = _animationController.drive(RGBTween());
+    )..repeat();
+    _colorBreath = _animationController.drive(
+        //keep cycling through colors
+        ColorTween(
+      begin: Colors.blue,
+      end: Colors.red,
+    )
+            .chain(
+              CurveTween(
+                curve: const Interval(0.0, 1.0, curve: Curves.slowMiddle),
+              ),
+            )
+            .chain(
+              CurveTween(
+                curve: const Interval(0.0, 1.0, curve: Curves.easeInOut),
+              ),
+            ));
     super.initState();
   }
 

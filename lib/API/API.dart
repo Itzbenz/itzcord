@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:itzcord/DiscordException.dart';
 import 'package:itzcord/Vars.dart';
 
 abstract class API<T> {
@@ -8,7 +9,7 @@ abstract class API<T> {
 
   //http stuff
   Object? serialize() {
-    return jsonEncode(this);
+    return jsonEncode(toJson());
   }
 
   String path();
@@ -26,6 +27,10 @@ abstract class API<T> {
   }
 
   //get, post, patch, put, delete
+  Future<http.Response> fetchHttp() {
+    return post();
+  }
+
   Future<http.Response> get() {
     return http.get(toUri(), headers: headers());
   }
@@ -43,9 +48,17 @@ abstract class API<T> {
   }
 
   Future<Map<String, dynamic>> fetchJson() async {
-    http.Response response = await post();
+    http.Response response = await fetchHttp();
+    Map<String, dynamic> json = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw DiscordException.from(json);
+    }
     return jsonDecode(response.body);
   }
 
   Future<T> fetch();
+
+  Map<String, dynamic> toJson() => {};
 }

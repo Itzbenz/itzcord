@@ -1,6 +1,6 @@
+import 'package:http/http.dart' as http;
 import 'package:itzcord/API/API.dart';
 import 'package:itzcord/Model/Account.dart';
-
 class Me extends API<Account> {
   String token;
 
@@ -9,6 +9,11 @@ class Me extends API<Account> {
   @override
   String path() {
     return "users/@me";
+  }
+
+  @override
+  Future<http.Response> fetchHttp() {
+    return get();
   }
 
   @override
@@ -21,5 +26,12 @@ class Me extends API<Account> {
   static Account fromJson(Map<String, dynamic> json) {
     return Account(
         json['name'], json['discriminator'], json['avatar_url'], json['token']);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'token': token,
+    };
   }
 }
