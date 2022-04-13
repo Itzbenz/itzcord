@@ -71,36 +71,38 @@ class LoadingScreenState extends State<LoadingScreen>
     if (initialized) {
       return LoginScreen.build(context);
     } else {
-      return StreamBuilder<String>(
-        stream: init(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData && !initialized) {
-            //loading screen with text on the bottom of progress bar
-            return Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CircularProgressIndicator(
-                      valueColor: _colorBreath,
-                    ),
-                    Text(
-                      snapshot.data ?? "Done",
-                      style: const TextStyle(
-                        fontSize: 20,
+      return Scaffold(
+        body: StreamBuilder<String>(
+          stream: init(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && !initialized) {
+              //loading screen with text on the bottom of progress bar
+              return Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(
+                        valueColor: _colorBreath,
                       ),
-                    ),
-                  ],
+                      Text(
+                        snapshot.data ?? "Done",
+                        style: const TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          } else {
-            setState(() {
-              initialized = true;
-            });
-            return const Text("Loading");
-          }
-        },
+              );
+            } else {
+              setState(() {
+                initialized = true;
+              });
+              return const Text("Loading");
+            }
+          },
+        ),
       );
     }
   }
