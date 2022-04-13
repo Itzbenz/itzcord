@@ -34,7 +34,6 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class RGBTween extends ColorTween {
-  RGBTween({Color? begin, Color? end}) : super(begin: begin, end: end);
 
   //0 - 1
   //start of spectrum - end of spectrum
@@ -60,50 +59,40 @@ class LoadingScreenState extends State<LoadingScreen>
       vsync: this,
       duration: const Duration(seconds: 2),
     );
-    _colorBreath = _animationController.drive(RGBTween(
-        begin: const Color.fromARGB(255, 0, 0, 0),
-        end: const Color.fromARGB(255, 255, 255, 255)));
+    _colorBreath = _animationController.drive(RGBTween());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (initialized) {
-      return LoginScreen.build(context);
-    } else {
-      return Scaffold(
+    return Scaffold(
         body: StreamBuilder<String>(
           stream: init(),
           builder: (context, snapshot) {
             if (snapshot.hasData && !initialized) {
               //loading screen with text on the bottom of progress bar
-              return Scaffold(
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CircularProgressIndicator(
-                        valueColor: _colorBreath,
-                      ),
-                      Text(
-                        snapshot.data ?? "Done",
-                        style: const TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                    ],
+              return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(
+                    valueColor: _colorBreath,
                   ),
-                ),
-              );
-            } else {
-              setState(() {
-                initialized = true;
-              });
-              return const Text("Loading");
-            }
-          },
+                  Text(
+                    snapshot.data ?? "Done",
+                    style: const TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            return LoginScreen.build(context);
+          }
+          return const Text("Loading");
+        },
         ),
       );
-    }
   }
 }

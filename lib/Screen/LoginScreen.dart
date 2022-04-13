@@ -105,41 +105,165 @@ class LoginScreen {
             }));
           },
         ),
+        MaterialButton(
+          child: const Text("Cancel"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        )
       ],
     );
   }
 
+  static Widget userInput(TextEditingController userInput, String hintTitle,
+      TextInputType keyboardType) {
+    return TextField(
+      controller: userInput,
+      decoration: InputDecoration(
+        hintText: hintTitle,
+        border: const OutlineInputBorder(),
+      ),
+      keyboardType: keyboardType,
+    );
+  }
+
   static buildAddToken(BuildContext context) {
+    final TextEditingController tokenInput = TextEditingController();
     return SimpleDialog(
       title: const Text("Add Account"),
       children: [
-        TextField(
-          decoration: const InputDecoration(labelText: "Token"),
-          onSubmitted: (token) {
-            Navigator.pop(context);
-          },
-        ),
+        userInput(tokenInput, "Token", TextInputType.text),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            MaterialButton(
+              color: Colors.red,
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            MaterialButton(
+              color: Colors.green,
+              child: const Text("Add"),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return buildAddTokenConfirm(context, tokenInput.text);
+                }));
+              },
+            ),
+          ],
+        )
       ],
     );
   }
 
   static buildAddLogin(BuildContext context) {
+    final TextEditingController userInputController = TextEditingController();
+    final TextEditingController passwordInput = TextEditingController();
     return SimpleDialog(
       title: const Text("Add Account"),
       children: [
-        TextField(
-          decoration: const InputDecoration(labelText: "Login"),
-          onSubmitted: (login) {
-            Navigator.pop(context);
-          },
-        ),
-        TextField(
-          decoration: const InputDecoration(labelText: "Password"),
-          onSubmitted: (password) {
-            Navigator.pop(context);
-          },
-        ),
+        userInput(userInputController, "User", TextInputType.text),
+        userInput(passwordInput, "Password", TextInputType.text),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            MaterialButton(
+              color: Colors.red,
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            MaterialButton(
+              color: Colors.green,
+              child: const Text("Add"),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return buildAddLoginConfirm(
+                      context, userInputController.text, passwordInput.text);
+                }));
+              },
+            ),
+          ],
+        )
       ],
+    );
+  }
+
+  static buildAddTokenConfirm(BuildContext context, String token) {
+    return FutureBuilder(
+      future: Account.fromToken(token),
+      builder: (BuildContext context, AsyncSnapshot<Account> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+        if (snapshot.hasError) {
+          return AlertDialog(
+            title: const Text("Error"),
+            content: Text(snapshot.error.toString()),
+            actions: [
+              MaterialButton(
+                child: const Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        }
+        return SimpleDialog(
+          title: const Text("Add Account"),
+          children: [
+            Text("Account added"),
+            MaterialButton(
+              child: const Text("Ok"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static buildAddLoginConfirm(
+      BuildContext context, String username, String password) {
+    return FutureBuilder(
+      future: Account.fromLogin(username, password),
+      builder: (BuildContext context, AsyncSnapshot<Account> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }
+        if (snapshot.hasError) {
+          return AlertDialog(
+            title: const Text("Error"),
+            content: Text(snapshot.error.toString()),
+            actions: [
+              MaterialButton(
+                child: const Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        }
+        return SimpleDialog(
+          title: const Text("Add Account"),
+          children: [
+            Text("Account added"),
+            MaterialButton(
+              child: const Text("Ok"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

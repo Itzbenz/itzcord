@@ -12,4 +12,9 @@ class Account {
   static Future<Account> fromToken(String token) {
     return Me(token).fetch();
   }
+
+  static fromLogin(String username, String password) async {
+    //sleep
+    await Future.delayed(Duration(seconds: 3));
+  }
 }
