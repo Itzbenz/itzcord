@@ -28,7 +28,7 @@ jobs:
          cache: true
       - name: Install dependencies
         run: dart pub get
-      - run: flutter build web
+      - run: flutter build web --base-href /itzcord
       - run: |
          rm -rf .git
          git clone -b gh_pages https://github.com/${{ github.repository }} gh_pages
