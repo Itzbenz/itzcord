@@ -1,6 +1,6 @@
 import 'dart:io';
 
-class DiscordException extends IOException{
+class DiscordException extends IOException {
   final String message;
   late final int code;
 

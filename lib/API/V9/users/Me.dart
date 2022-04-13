@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:itzcord/API/API.dart';
 import 'package:itzcord/Model/Account.dart';
+
 class Me extends API<Account> {
   String token;
 

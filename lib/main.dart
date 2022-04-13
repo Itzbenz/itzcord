@@ -33,8 +33,6 @@ class LoadingScreen extends StatefulWidget {
   }
 }
 
-
-
 class LoadingScreenState extends State<LoadingScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
@@ -69,12 +67,12 @@ class LoadingScreenState extends State<LoadingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: StreamBuilder<String>(
-          stream: init(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData && !initialized) {
-              //loading screen with text on the bottom of progress bar
-              return Center(
+      body: StreamBuilder<String>(
+        stream: init(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && !initialized) {
+            //loading screen with text on the bottom of progress bar
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -95,7 +93,7 @@ class LoadingScreenState extends State<LoadingScreen>
           }
           return const Text("Loading");
         },
-        ),
-      );
+      ),
+    );
   }
 }
