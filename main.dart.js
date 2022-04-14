@@ -18484,7 +18484,7 @@ break}s=11
 q=[1]
 return A.eC(A.Jc("Fetching info... "+l+"/10"),$async$jA,r)
 case 11:s=12
-return A.eC(A.CC(new A.az(1000*B.vW.a4z(1000)),m),$async$jA,r)
+return A.eC(A.CC(new A.az(1000*B.vW.a4z(500)),m),$async$jA,r)
 case 12:case 9:++l
 s=8
 break
