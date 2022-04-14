@@ -27,7 +27,19 @@ class LoginScreen {
 
   static Widget accountButton(Account account, {VoidCallback? onPressed}) {
     return MaterialButton(
-      child: Text(account.name),
+      child: Row(
+        children: [
+          ClipOval(
+            child: Image.network(
+              account.avatar_url,
+              width: 40,
+              height: 40,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Text("  " + account.name + "#" + account.discriminator),
+        ],
+      ),
       color: account.token == selectedAccount ? Colors.blue : Colors.white,
       onPressed: onPressed,
     );
@@ -73,6 +85,8 @@ class LoginScreen {
             },
           ),
           body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
             children: [
               for (Widget child in children) child,
               if (snapshot.connectionState == ConnectionState.waiting)
@@ -267,6 +281,9 @@ class LoginScreen {
             MaterialButton(
               child: const Text("Add"),
               onPressed: () {
+                addAccount(account);
+                Navigator.pop(context);
+                Navigator.pop(context);
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
@@ -305,7 +322,7 @@ class LoginScreen {
         return SimpleDialog(
           title: const Text("Add Account"),
           children: [
-            Text("Account added"),
+            const Text("Account added"),
             MaterialButton(
               child: const Text("Ok"),
               onPressed: () {
@@ -316,5 +333,12 @@ class LoginScreen {
         );
       },
     );
+  }
+
+  static void addAccount(Account account) async {
+    final prefs = await SharedPreferences.getInstance();
+    final accounts = prefs.getStringList("accounts") ?? [];
+    final newAccounts = List<String>.from(accounts)..add(account.token);
+    prefs.setStringList("accounts", newAccounts);
   }
 }
