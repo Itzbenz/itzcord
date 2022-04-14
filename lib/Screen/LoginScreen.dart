@@ -99,11 +99,12 @@ class LoginScreen {
         ),
         MaterialButton(
           child: const Text("Add By Login"),
-          onPressed: () {
+          onPressed: /* () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return LoginScreen.buildAddLogin(context);
             }));
-          },
+          },*/
+              null,
         ),
         MaterialButton(
           child: const Text("Cancel"),
@@ -176,6 +177,7 @@ class LoginScreen {
     );
   }
 
+  //hcaptcha, verify login, etc
   static buildAddLogin(BuildContext context) {
     final TextEditingController userInputController = TextEditingController();
     final TextEditingController passwordInput = TextEditingController();
@@ -237,7 +239,7 @@ class LoginScreen {
         if (snapshot.data == null) {
           return AlertDialog(
             title: const Text("Error"),
-            content: Text("Invalid Token"),
+            content: const Text("Invalid Token"),
             actions: [
               MaterialButton(
                 child: const Text("Ok"),
@@ -259,11 +261,13 @@ class LoginScreen {
               child: const Text("Cancel"),
               onPressed: () {
                 Navigator.pop(context);
+                Navigator.pop(context);
               },
             ),
             MaterialButton(
               child: const Text("Add"),
               onPressed: () {
+                Navigator.pop(context);
                 Navigator.pop(context);
               },
             ),
