@@ -14,25 +14,17 @@ class Me extends API<Account> {
 
   @override
   Future<http.Response> fetchHttp() {
-    return get();
+    return get(additionalHeader: {
+      "Authorization": token,
+    });
   }
 
   @override
   Future<Account> fetch() async {
     Map<String, dynamic> data = await fetchJson();
     data["token"] = token;
-    return fromJson(data);
+    return Account.fromJson(data);
   }
 
-  static Account fromJson(Map<String, dynamic> json) {
-    return Account(
-        json['name'], json['discriminator'], json['avatar_url'], json['token']);
-  }
 
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'token': token,
-    };
-  }
 }

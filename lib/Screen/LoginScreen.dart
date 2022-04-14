@@ -158,6 +158,24 @@ class LoginScreen {
     );
   }
 
+  static buildAccountInfo(Account account) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ClipOval(
+          child: Image.network(
+            account.avatar_url,
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Text(account.name + "#" + account.discriminator),
+        //Text("Email: "+(account.email ??  "No Email")),
+      ],
+    );
+  }
+
   static buildAddLogin(BuildContext context) {
     final TextEditingController userInputController = TextEditingController();
     final TextEditingController passwordInput = TextEditingController();
@@ -193,11 +211,13 @@ class LoginScreen {
   }
 
   static buildAddTokenConfirm(BuildContext context, String token) {
-    return FutureBuilder(
+    return FutureBuilder<Account>(
       future: Account.fromToken(token),
       builder: (BuildContext context, AsyncSnapshot<Account> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return const AlertDialog(
+              title: Text("Fetching Account Info"),
+              content: LinearProgressIndicator());
         }
         if (snapshot.hasError) {
           return AlertDialog(
@@ -213,12 +233,36 @@ class LoginScreen {
             ],
           );
         }
-        return SimpleDialog(
-          title: const Text("Add Account"),
-          children: [
-            Text("Account added"),
+        late Account account;
+        if (snapshot.data == null) {
+          return AlertDialog(
+            title: const Text("Error"),
+            content: Text("Invalid Token"),
+            actions: [
+              MaterialButton(
+                child: const Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        } else {
+          account = snapshot.data!;
+        }
+
+        return AlertDialog(
+          title: const Text("Confirm Account"),
+          content: buildAccountInfo(account),
+          actions: [
             MaterialButton(
-              child: const Text("Ok"),
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            MaterialButton(
+              child: const Text("Add"),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -235,7 +279,10 @@ class LoginScreen {
       future: Account.fromLogin(username, password),
       builder: (BuildContext context, AsyncSnapshot<Account> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return const AlertDialog(
+            title: Text("Fetching Account Info"),
+            content: CircularProgressIndicator(),
+          );
         }
         if (snapshot.hasError) {
           return AlertDialog(

@@ -31,8 +31,12 @@ abstract class API<T> {
     return post();
   }
 
-  Future<http.Response> get() {
-    return http.get(toUri(), headers: headers());
+  Future<http.Response> get({Map<String, String>? additionalHeader}) {
+    Map<String, String> head = headers();
+    if (additionalHeader != null) {
+      head.addAll(additionalHeader);
+    }
+    return http.get(toUri(), headers: head);
   }
 
   Future<http.Response> post() {
@@ -55,7 +59,6 @@ abstract class API<T> {
     } else {
       throw DiscordException.from(json);
     }
-    return jsonDecode(response.body);
   }
 
   Future<T> fetch();
