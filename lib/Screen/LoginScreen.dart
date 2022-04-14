@@ -53,12 +53,19 @@ class LoginScreen {
     );
   }
 
+  static setSelectAccount(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("account.selected", token);
+    selectedAccount = token;
+  }
+
   static Widget build(BuildContext context) {
     Stream<Account> accountStream = fetchAccount();
     List<Widget> children = [];
     for (Account account in accounts) {
       children.add(accountButton(account, onPressed: () {
         selectedAccount = account.token;
+        setSelectAccount(account.token);
       }));
     }
     if (fetched) {
