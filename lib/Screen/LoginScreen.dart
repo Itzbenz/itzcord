@@ -26,6 +26,14 @@ class LoginScreen {
   }
 
   static Widget accountButton(Account account, {VoidCallback? onPressed}) {
+    Color color = account.token == selectedAccount ? Colors.blue : Colors.white;
+    int premiumType = (account.premium_type ?? 0);
+    if (premiumType == 1) {
+      color = Colors.deepPurpleAccent;
+    }
+    if (premiumType == 2) {
+      color = Colors.deepPurple;
+    }
     return MaterialButton(
       child: Row(
         children: [
@@ -37,10 +45,10 @@ class LoginScreen {
               fit: BoxFit.cover,
             ),
           ),
-          Text("  " + account.name + "#" + account.discriminator),
+          Text("  " + account.username + "#" + account.discriminator),
         ],
       ),
-      color: account.token == selectedAccount ? Colors.blue : Colors.white,
+      color: color,
       onPressed: onPressed,
     );
   }
@@ -184,7 +192,7 @@ class LoginScreen {
             fit: BoxFit.cover,
           ),
         ),
-        Text(account.name + "#" + account.discriminator),
+        Text(account.username + "#" + account.discriminator),
         //Text("Email: "+(account.email ??  "No Email")),
       ],
     );
