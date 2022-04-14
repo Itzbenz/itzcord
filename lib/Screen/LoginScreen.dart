@@ -85,7 +85,6 @@ class LoginScreen {
             },
           ),
           body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: [
               for (Widget child in children) child,
