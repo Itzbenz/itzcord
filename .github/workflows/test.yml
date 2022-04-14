@@ -37,12 +37,4 @@ jobs:
       # package:test for this step to succeed. Note that Flutter projects will
       # want to change this to 'flutter test'.
       - name: Run tests
-        run: flutter test
-      - name: Git Commit
-        run: |
-            git config --local user.email "github-actions[bot]@users.noreply.github.com"
-            git config --local user.name "Github CI[bot]"
-            git add .
-            git commit -m "Format"
-            git push
-      
+        run: flutter test --coverage
