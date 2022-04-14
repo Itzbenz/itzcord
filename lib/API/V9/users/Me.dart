@@ -25,6 +25,4 @@ class Me extends API<Account> {
     data["token"] = token;
     return Account.fromJson(data);
   }
-
-
 }
