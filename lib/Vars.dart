@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -8,7 +9,6 @@ late String appName;
 late String packageName;
 late String version;
 late String buildNumber;
-
 bool initialized = false;
 
 Stream<String> init() async* {
@@ -22,11 +22,14 @@ Stream<String> init() async* {
   var rng = Random();
   for (var i = 0; i < 11; i++) {
     yield "Fetching info... $i/10";
-    int w = rng.nextInt(1000);
+    int w = rng.nextInt(500);
     await Future.delayed(Duration(milliseconds: w));
   }
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   appName = packageInfo.appName;
+  if (kDebugMode) {
+    appName = "$appName (Debug)";
+  }
   packageName = packageInfo.packageName;
   version = packageInfo.version;
   buildNumber = packageInfo.buildNumber;
